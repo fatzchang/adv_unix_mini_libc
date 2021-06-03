@@ -235,5 +235,6 @@ void bzero(void *s, size_t size);
 size_t strlen(const char *s);
 void perror(const char *prefix);
 unsigned int sleep(unsigned int s);
+unsigned int alarm(unsigned int seconds);
 
 #endif	/* __LIBMINI_H__ */
