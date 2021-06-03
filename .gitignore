@@ -1,0 +1,5 @@
+/build
+/test
+
+libmini.so
+start.o
