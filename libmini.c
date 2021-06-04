@@ -137,12 +137,12 @@ int	gettimeofday(struct timeval *tv, struct timezone *tz) {
 	WRAPPER_RETval(int);
 }
 
-uid_t	getuid() {
+uid_t getuid() {
 	long ret = sys_getuid();
 	WRAPPER_RETval(uid_t);
 }
 
-gid_t	getgid() {
+gid_t getgid() {
 	long ret = sys_getgid();
 	WRAPPER_RETval(uid_t);
 }
@@ -157,12 +157,12 @@ int	setgid(gid_t gid) {
 	WRAPPER_RETval(int);
 }
 
-uid_t	geteuid() {
+uid_t geteuid() {
 	long ret = sys_geteuid();
 	WRAPPER_RETval(uid_t);
 }
 
-gid_t	getegid() {
+gid_t getegid() {
 	long ret = sys_getegid();
 	WRAPPER_RETval(uid_t);
 }

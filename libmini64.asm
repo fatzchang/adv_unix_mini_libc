@@ -102,7 +102,49 @@ sleep_quit:
 	add		rsp, 32
 	ret
 
-global alarm:function
+; my implementation
+	global alarm:function
 alarm:
 	call	sys_alarm
 	ret
+
+	global setjmp:function
+setjmp:
+	cmp		rdx, 999
+	je		call_by_long_jmp
+
+	lea		rcx, [rip - 16] ; set rip points to cmp
+	mov		[rdi], rbx
+	mov		[rdi+0x08], rsp
+	mov		[rdi+0x10], rbp
+	mov		[rdi+0x18], rcx
+	mov		[rdi+0x20], r12
+	mov		[rdi+0x28], r13
+	mov		[rdi+0x30], r14
+	mov		[rdi+0x38], r15
+	; preserve signal mask, get from sigprocmask
+
+	mov		rax, 0
+call_by_long_jmp:
+	;clear rdx
+	mov		rdx, 0
+
+	; use jmp instead of ret, to preserve the return address
+	jmp		[rsp]
+
+	global longjmp:function
+longjmp:
+	; restore registers
+	mov		rbx, [rdi]
+	mov		rsp, [rdi+0x08]
+	mov		rbp, [rdi+0x10]
+	mov		rcx, [rdi+0x18]
+	mov		r12, [rdi+0x20]
+	mov		r13, [rdi+0x28]
+	mov		r14, [rdi+0x30]
+	mov		r15, [rdi+0x38]
+	; restore signal mask
+
+	mov		rdx, 999
+	mov		rax, rsi
+	jmp		rcx

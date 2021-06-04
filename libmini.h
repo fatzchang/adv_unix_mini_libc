@@ -201,7 +201,7 @@ ssize_t	read(int fd, char *buf, size_t count);
 ssize_t	write(int fd, const void *buf, size_t count);
 int	open(const char *filename, int flags, ... /*mode*/);
 int	close(unsigned int fd);
-void *	mmap(void *addr, size_t len, int prot, int flags, int fd, off_t off);
+void *mmap(void *addr, size_t len, int prot, int flags, int fd, off_t off);
 int	mprotect(void *addr, size_t len, int prot);
 int	munmap(void *addr, size_t len);
 int	pipe(int *filedes);
@@ -209,9 +209,9 @@ int	dup(int filedes);
 int	dup2(int oldfd, int newfd);
 int	pause();
 int	nanosleep(struct timespec *rqtp, struct timespec *rmtp);
-pid_t	fork(void);
-void	exit(int error_code);
-char *	getcwd(char *buf, size_t size);
+pid_t fork(void);
+void exit(int error_code);
+char *getcwd(char *buf, size_t size);
 int	chdir(const char *pathname);
 int	rename(const char *oldname, const char *newname);
 int	mkdir(const char *pathname, int mode);
@@ -224,17 +224,44 @@ int	chmod(const char *filename, mode_t mode);
 int	chown(const char *filename, uid_t user, gid_t group);
 int	umask(int mask);
 int	gettimeofday(struct timeval *tv, struct timezone *tz);
-uid_t	getuid();
-gid_t	getgid();
+uid_t getuid();
+gid_t getgid();
 int	setuid(uid_t uid);
 int	setgid(gid_t gid);
-uid_t	geteuid();
-gid_t	getegid();
+uid_t geteuid();
+gid_t getegid();
 
 void bzero(void *s, size_t size);
 size_t strlen(const char *s);
 void perror(const char *prefix);
 unsigned int sleep(unsigned int s);
+
+
+// my implementation
+
+typedef struct {
+	unsigned long sig[1];
+} sigset_t;
+
+struct jmp_regs {
+	long long rbx;
+	long long rsp;
+	long long rbp;
+	long long rip;
+	long long r12;
+	long long r13;
+	long long r14;
+	long long r15;
+};
+
+typedef struct jmp_buf_s {
+	struct jmp_regs regs;
+	sigset_t mask;
+} jmp_buf[1];
+
 unsigned int alarm(unsigned int seconds);
+int setjmp(jmp_buf env);
+void longjmp(jmp_buf env, int val);
+
 
 #endif	/* __LIBMINI_H__ */
