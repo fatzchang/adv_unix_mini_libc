@@ -246,3 +246,56 @@ unsigned int sleep(unsigned int seconds) {
 	return 0;
 }
 #endif
+
+
+// my implementation
+void * memset ( void * ptr, int value, size_t num )
+{
+	size_t i;
+	char *tmp = ptr;
+	for (i = 0; i < num; i++) {
+		tmp[i] = (unsigned char) value;
+	}
+
+	return ptr;
+}
+
+int sigemptyset(sigset_t *set)
+{
+	memset(set, 0, sizeof(sigset_t));
+	return 0;
+}
+
+int sigfillset(sigset_t *set)
+{
+	memset(set, -1, sizeof(sigset_t));
+	return 0;
+}
+
+int sigaddset (sigset_t *set, int sig)
+{
+	int shift = sig - 1;
+	*set->sig |= (1UL << shift);
+	return 0;
+}
+
+int sigdelset (sigset_t *set, int sig)
+{
+	int shift = sig - 1;
+	*set->sig &= ~(1UL << shift);
+	return 0;
+}
+
+int sigismember(const sigset_t *set, int sig)
+{
+	int shift = sig - 1;
+	return *set->sig & (1UL << shift) ? 1 : 0;
+}
+
+// long sigaction(int how, const struct sigaction *nact, struct sigaction *oact) {
+// 	...
+// 	nact->sa_flags |= SA_RESTORER;
+// 	nact->sa_restorer = /* your customized restore routine, e.g., __myrt */;
+// 	ret = sys_rt_sigaction(how, nact, oact, sizeof(sigset_t));
+// 	...
+// }

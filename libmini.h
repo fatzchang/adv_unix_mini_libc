@@ -66,7 +66,7 @@ extern long errno;
 #define	ENOENT		 2	/* No such file or directory */
 #define	ESRCH		 3	/* No such process */
 #define	EINTR		 4	/* Interrupted system call */
-#define	EIO		 5	/* I/O error */
+#define	EIO		 	 5	/* I/O error */
 #define	ENXIO		 6	/* No such device or address */
 #define	E2BIG		 7	/* Argument list too long */
 #define	ENOEXEC		 8	/* Exec format error */
@@ -129,6 +129,12 @@ extern long errno;
 #define SIGWINCH	28
 #define SIGIO		29
 #define SIGPOLL		SIGIO
+#define SIGPWR		30
+#define SIGSYS		31
+
+// SIG_ERR
+// SIG_DFL
+// SIG_IGN
 
 /* from /usr/include/x86_64-linux-gnu/bits/sigaction.h */
 #define	SA_NOCLDSTOP  1		 /* Don't send SIGCHLD when children stop.  */
@@ -243,6 +249,21 @@ typedef struct {
 	unsigned long sig[1];
 } sigset_t;
 
+// struct sigaction {
+// #ifndef __ARCH_HAS_IRIX_SIGACTION
+// 	__sighandler_t	sa_handler;
+// 	unsigned long	sa_flags;
+// #else
+// 	unsigned int	sa_flags;
+// 	__sighandler_t	sa_handler;
+// #endif
+// #ifdef __ARCH_HAS_SA_RESTORER
+// 	__sigrestore_t sa_restorer;
+// #endif
+// 	sigset_t	sa_mask;	/* mask last for extensibility */
+// };
+
+
 struct jmp_regs {
 	long long rbx;
 	long long rsp;
@@ -262,6 +283,17 @@ typedef struct jmp_buf_s {
 unsigned int alarm(unsigned int seconds);
 int setjmp(jmp_buf env);
 void longjmp(jmp_buf env, int val);
+
+// int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact);
+int sigismember(const sigset_t *set, int sig);
+int sigaddset (sigset_t *set, int sig);
+int sigdelset (sigset_t *set, int sig);
+int sigemptyset(sigset_t *set);
+int sigfillset(sigset_t *set);
+int sigpending(sigset_t *set);
+int sigprocmask(int how, const sigset_t *set, sigset_t *oldset);
+// sighandler_t signal(int signum, sighandler_t handler);
+
 
 
 #endif	/* __LIBMINI_H__ */
