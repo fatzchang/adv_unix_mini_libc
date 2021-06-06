@@ -132,10 +132,6 @@ extern long errno;
 #define SIGPWR		30
 #define SIGSYS		31
 
-// SIG_ERR
-// SIG_DFL
-// SIG_IGN
-
 /* from /usr/include/x86_64-linux-gnu/bits/sigaction.h */
 #define	SA_NOCLDSTOP  1		 /* Don't send SIGCHLD when children stop.  */
 #define SA_NOCLDWAIT  2		 /* Don't create zombie on child death.  */
@@ -244,6 +240,22 @@ unsigned int sleep(unsigned int s);
 
 
 // my implementation
+#define __user
+#define __force
+
+#define SIG_DFL ((__force __sighandler_t)0)
+#define SIG_IGN ((__force __sighandler_t)1)
+#define SIG_ERR	((__force __sighandler_t)-1)
+
+#define SA_RESTORER	0x04000000
+
+typedef void __signalfn_t(int);
+typedef __signalfn_t *__sighandler_t;
+
+typedef void __restorefn_t(void);
+typedef __restorefn_t *__sigrestore_t;
+
+typedef __sighandler_t sighandler_t;
 
 typedef struct {
 	unsigned long sig[1];
@@ -264,6 +276,14 @@ typedef struct {
 // };
 
 
+struct sigaction {
+	unsigned int	sa_flags;
+	__sighandler_t	sa_handler;
+	__sigrestore_t sa_restorer;
+	sigset_t   sa_mask;
+};
+
+
 struct jmp_regs {
 	long long rbx;
 	long long rsp;
@@ -280,19 +300,26 @@ typedef struct jmp_buf_s {
 	sigset_t mask;
 } jmp_buf[1];
 
+// system call
+long sys_rt_sigprocmask(int how, const sigset_t *nset, sigset_t *oset, size_t sigsetsize);
+long sys_rt_sigaction(int sig, const struct sigaction *act, struct sigaction *oact, size_t sigsetsize);
+long sys_rt_sigreturn(unsigned long __unused);
+
 unsigned int alarm(unsigned int seconds);
 int setjmp(jmp_buf env);
 void longjmp(jmp_buf env, int val);
 
-// int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact);
+int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact);
 int sigismember(const sigset_t *set, int sig);
 int sigaddset (sigset_t *set, int sig);
 int sigdelset (sigset_t *set, int sig);
 int sigemptyset(sigset_t *set);
 int sigfillset(sigset_t *set);
-int sigpending(sigset_t *set);
+// int sigpending(sigset_t *set);
 int sigprocmask(int how, const sigset_t *set, sigset_t *oldset);
-// sighandler_t signal(int signum, sighandler_t handler);
+sighandler_t signal(int signum, sighandler_t handler);
+
+void __myrt();
 
 
 

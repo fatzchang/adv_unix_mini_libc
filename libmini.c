@@ -292,10 +292,52 @@ int sigismember(const sigset_t *set, int sig)
 	return *set->sig & (1UL << shift) ? 1 : 0;
 }
 
-// long sigaction(int how, const struct sigaction *nact, struct sigaction *oact) {
-// 	...
-// 	nact->sa_flags |= SA_RESTORER;
-// 	nact->sa_restorer = /* your customized restore routine, e.g., __myrt */;
-// 	ret = sys_rt_sigaction(how, nact, oact, sizeof(sigset_t));
-// 	...
-// }
+int sigprocmask(int how, const sigset_t *set, sigset_t *oldset)
+{
+	long rtn = sys_rt_sigprocmask(how, set, oldset, sizeof(sigset_t));
+	return rtn == -1 ? -1 : 0;
+}
+
+int sigaction(int signum, const struct sigaction *act, struct sigaction *oldact)
+{
+	struct sigaction nact;
+	nact.sa_flags = act->sa_flags | SA_RESTORER;
+	nact.sa_handler = act->sa_handler;
+	nact.sa_restorer = __myrt;
+
+	long rtn = sys_rt_sigaction(signum, &nact, oldact, sizeof(sigset_t));
+
+	if (rtn != 0) {
+		errno = rtn;
+		rtn = -1;
+	}
+	return rtn;
+}
+
+sighandler_t signal(int signum, sighandler_t handler)
+{
+	struct sigaction act, oldact;
+	act.sa_handler = handler;
+	sigemptyset(&act.sa_mask);
+	act.sa_flags = 0;
+	if (signum == SIGALRM) {
+#ifdef SA_INTERRUPT
+		act.sa_flags |= SA_INTERRUPT;
+#endif
+	} else {
+#ifdef SA_RESTART
+		act.sa_flags |= SA_RESTART;
+#endif
+	}
+
+	if (sigaction(signum, &act, &oldact) < 0) {
+		return (SIG_ERR);
+	}
+
+	return (oldact.sa_handler);
+}
+
+void __myrt()
+{
+	sys_rt_sigreturn(0);
+}
