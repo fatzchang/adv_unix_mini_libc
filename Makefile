@@ -9,6 +9,24 @@ all:
 test:	
 	gcc -c -o test/test.o -g -Wall -fno-stack-protector -nostdlib -I. -I.. -DUSEMINI test/test.c
 	ld -m elf_x86_64 --dynamic-linker /lib64/ld-linux-x86-64.so.2 -o test/test test/test.o start.o -L. -L.. -lmini
+	rm test/test.o
+alarm1:
+	gcc -c -o test/alarm1.o -g -Wall -fno-stack-protector -nostdlib -I. -I.. -DUSEMINI test/alarm1.c
+	ld -m elf_x86_64 --dynamic-linker /lib64/ld-linux-x86-64.so.2 -o test/alarm1 test/alarm1.o start.o -L. -L.. -lmini
+	rm test/alarm1.o
+alarm2:
+	gcc -c -o test/alarm2.o -g -Wall -fno-stack-protector -nostdlib -I. -I.. -DUSEMINI test/alarm2.c
+	ld -m elf_x86_64 --dynamic-linker /lib64/ld-linux-x86-64.so.2 -o test/alarm2 test/alarm2.o start.o -L. -L.. -lmini
+	rm test/alarm2.o
+alarm3:
+	gcc -c -o test/alarm3.o -g -Wall -fno-stack-protector -nostdlib -I. -I.. -DUSEMINI test/alarm3.c
+	ld -m elf_x86_64 --dynamic-linker /lib64/ld-linux-x86-64.so.2 -o test/alarm3 test/alarm3.o start.o -L. -L.. -lmini
+	rm test/alarm3.o
+jmp1:
+	gcc -c -o test/jmp1.o -g -Wall -fno-stack-protector -nostdlib -I. -I.. -DUSEMINI test/jmp1.c
+	ld -m elf_x86_64 --dynamic-linker /lib64/ld-linux-x86-64.so.2 -o test/jmp1 test/jmp1.o start.o -L. -L.. -lmini
+	rm test/jmp1.o
+
 
 .PHONY: clean
 clean:

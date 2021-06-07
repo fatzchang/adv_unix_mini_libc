@@ -1,5 +1,5 @@
 /build
-/test
+/.vscode
 
 libmini.so
 start.o
