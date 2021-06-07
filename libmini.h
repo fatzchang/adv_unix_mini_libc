@@ -263,21 +263,6 @@ typedef struct {
 	unsigned long sig[1];
 } sigset_t;
 
-// struct sigaction {
-// #ifndef __ARCH_HAS_IRIX_SIGACTION
-// 	__sighandler_t	sa_handler;
-// 	unsigned long	sa_flags;
-// #else
-// 	unsigned int	sa_flags;
-// 	__sighandler_t	sa_handler;
-// #endif
-// #ifdef __ARCH_HAS_SA_RESTORER
-// 	__sigrestore_t sa_restorer;
-// #endif
-// 	sigset_t	sa_mask;	/* mask last for extensibility */
-// };
-
-
 struct sigaction {
 	__sighandler_t	sa_handler;
 	unsigned long	sa_flags;
