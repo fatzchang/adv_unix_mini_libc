@@ -242,6 +242,8 @@ unsigned int sleep(unsigned int s);
 // my implementation
 #define __user
 #define __force
+// # define __user		__attribute__((noderef, address_space(1)))
+// # define __force	__attribute__((force))
 
 #define SIG_DFL ((__force __sighandler_t)0)
 #define SIG_IGN ((__force __sighandler_t)1)
@@ -277,9 +279,9 @@ typedef struct {
 
 
 struct sigaction {
-	unsigned int	sa_flags;
 	__sighandler_t	sa_handler;
-	__sigrestore_t sa_restorer;
+	unsigned long	sa_flags;
+	__sigrestore_t 	sa_restorer;
 	sigset_t   sa_mask;
 };
 
@@ -303,7 +305,8 @@ typedef struct jmp_buf_s {
 // system call
 long sys_rt_sigprocmask(int how, const sigset_t *nset, sigset_t *oset, size_t sigsetsize);
 long sys_rt_sigaction(int sig, const struct sigaction *act, struct sigaction *oact, size_t sigsetsize);
-long sys_rt_sigreturn(unsigned long __unused);
+long sys_rt_sigreturn(void);
+long sys_rt_sigpending(sigset_t *set, size_t sigsetsize);
 
 unsigned int alarm(unsigned int seconds);
 int setjmp(jmp_buf env);
@@ -315,7 +318,7 @@ int sigaddset (sigset_t *set, int sig);
 int sigdelset (sigset_t *set, int sig);
 int sigemptyset(sigset_t *set);
 int sigfillset(sigset_t *set);
-// int sigpending(sigset_t *set);
+int sigpending(sigset_t *set);
 int sigprocmask(int how, const sigset_t *set, sigset_t *oldset);
 sighandler_t signal(int signum, sighandler_t handler);
 

@@ -337,7 +337,14 @@ sighandler_t signal(int signum, sighandler_t handler)
 	return (oldact.sa_handler);
 }
 
-void __myrt()
+int sigpending(sigset_t *set)
 {
-	sys_rt_sigreturn(0);
+	long rtn = sys_rt_sigpending(set, sizeof(sigset_t));
+	
+	if (rtn != 0) {
+		errno = rtn;
+		rtn = -1;
+	}
+
+	return rtn;
 }
