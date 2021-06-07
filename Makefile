@@ -32,7 +32,12 @@ jmp1:
 clean:
 	rm -rf build
 	rm libmini.so start.o 
-	rm test/test test/test.o
 
-run:
-	LD_LIBRARY_PATH=. ./test/test
+run-alarm1:
+	LD_LIBRARY_PATH=. ./test/alarm1
+run-alarm2:
+	LD_LIBRARY_PATH=. ./test/alarm2
+run-alarm3:
+	LD_LIBRARY_PATH=. ./test/alarm3
+run-jmp1:
+	LD_LIBRARY_PATH=. ./test/jmp1
